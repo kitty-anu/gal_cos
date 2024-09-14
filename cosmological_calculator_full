@@ -8,6 +8,7 @@ Omega_lambda0 = 0.7
 Omega_k0 = 1 - Omega_m0 - Omega_lambda0
 H_0 = 0.07  # in units of 1/Gigayear
 c = 299792.458 * 1e-3  # Speed of light in Mpc/Gyr
+z_input = 0.01 #redshift
 
 # Number of steps and maximum lookback time (Gigayears)
 tau_max = 10  # Maximum lookback time in Gigayears
@@ -97,56 +98,3 @@ compare_distances(z_values, Omega_m0=1, Omega_lambda0=0, Omega_k0=0)
 
 # Lambda-only universe
 compare_distances(z_values, Omega_m0=0, Omega_lambda0=1, Omega_k0=0)
-
-# Plot for scale factor a(tau)
-plt.plot(tau, a)
-plt.xlabel('Lookback Time τ (Gigayears)')
-plt.ylabel('Scale Factor a(τ)')
-plt.title('Scale Factor a(τ)')
-plt.grid(True)
-plt.savefig('plot1.png')
-
-# Plot for redshift z(tau)
-plt.clf()
-plt.plot(tau, z)
-plt.xlabel('Lookback Time τ (Gigayears)')
-plt.ylabel('Redshift z')
-plt.title('Redshift z(τ)')
-plt.grid(True)
-plt.savefig('plot2.png')
-
-# Plot for Hubble parameter H(z)
-plt.clf()
-plt.plot(tau, H_z)
-plt.xlabel('Lookback Time τ (Gigayears)')
-plt.ylabel('Hubble Parameter H(z) (Gyr⁻¹)')
-plt.title('Hubble Parameter H(z)')
-plt.grid(True)
-plt.savefig('plot3.png')
-
-# Plot for angular diameter distance D_A
-plt.clf()
-plt.plot(tau, D_A / 1000)  # Convert to Mpc
-plt.xlabel('Lookback Time τ (Gigayears)')
-plt.ylabel('Angular Diameter Distance D_A (Mpc)')
-plt.title('Angular Diameter Distance D_A(τ)')
-plt.grid(True)
-plt.savefig('plot4.png')
-
-# Plot for comoving distance D_P
-plt.clf()
-plt.plot(tau, D_P / 1000)  # Convert to Mpc
-plt.xlabel('Lookback Time τ (Gigayears)')
-plt.ylabel('Comoving Distance D_C (Mpc)')
-plt.title('Comoving Distance D_C(τ)')
-plt.grid(True)
-plt.savefig('plot5.png')
-
-# Plot for luminosity distance D_L
-plt.clf()
-plt.plot(tau, D_L / 1000)  # Convert to Mpc
-plt.xlabel('Lookback Time τ (Gigayears)')
-plt.ylabel('Luminosity Distance D_L (Mpc)')
-plt.title('Luminosity Distance D_L(τ)')
-plt.grid(True)
-plt.savefig('plot6.png')
