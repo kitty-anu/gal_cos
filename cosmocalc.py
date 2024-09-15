@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 ##### -----------------------------------------------------------------------------------------------------------------------------------
 
 # Differential equation for da/dtau
-def da_dtau(a, Omega_k0, Omega_m0, Omega_lambda0):
+def da_dtau(a, Omega_k0, Omega_m0, Omega_lambda0, H_0):
     if Omega_k0 == 1:  # Empty Universe
         return -H_0 * np.sqrt(Omega_k0)
     elif Omega_m0 == 1: # Matter-Only Univerese
@@ -18,7 +18,7 @@ def da_dtau(a, Omega_k0, Omega_m0, Omega_lambda0):
         return -H_0 * np.sqrt((Omega_m0 / a) + Omega_k0 + (Omega_lambda0 * a**2))
 
 # Hubble parameter as a function of a
-def H(z, Omega_k0, Omega_m0, Omega_lambda0):
+def H(z, Omega_k0, Omega_m0, Omega_lambda0, H_0):
     if Omega_k0 == 1:  # Empty Universe
         return H_0 * np.sqrt(Omega_k0 / (1/(1+z))**2)
     elif Omega_m0 == 1: # Matter-Only Univerese
@@ -68,13 +68,13 @@ def cosmology_calc(dtau, Omega_m0, Omega_lambda0, H_0):
     # Euler's method to solve da/dtau and coming distance integral for distances
     for i in range(1, num_steps):
         # calc a from previous a
-        a[i] = max(a[i-1] + dtau * da_dtau(a[i-1], Omega_k0, Omega_m0, Omega_lambda0), 1e-10)  # Prevent a from becoming zero or negative
+        a[i] = max(a[i-1] + dtau * da_dtau(a[i-1], Omega_k0, Omega_m0, Omega_lambda0, H_0), 1e-10)  # Prevent a from becoming zero or negative
         
         # calc redshift from current a
         z[i] = 1 / a[i] - 1
         
         # hubble parameter - should be in terms of z?
-        H_z[i] = H(z[i], Omega_k0, Omega_m0, Omega_lambda0)
+        H_z[i] = H(z[i], Omega_k0, Omega_m0, Omega_lambda0, H_0)
         
         # comoving distance
         D_C[i] = D_C[i-1] + (c / a[i-1]) * dtau  # Comoving distance integral
@@ -125,12 +125,12 @@ def analytical_distances(z, Omega_m0, Omega_lambda0):
     return D_P, D_A, D_L    
 
 # Function to extract numerical distances at a specific redshift
-def numerical_distances(z_value, z_array, D_C_array, D_A_array, D_L_array):
+def numerical_distances(z_value, z_array, D_P_array, D_A_array, D_L_array):
     # Using np.interp to interpolate values at the given redshift
-    D_C_val = np.interp(z_value, z_array, D_C_array)
+    D_P_val = np.interp(z_value, z_array, D_P_array)
     D_A_val = np.interp(z_value, z_array, D_A_array)
     D_L_val = np.interp(z_value, z_array, D_L_array)
-    return D_C_val, D_A_val, D_L_val
+    return D_P_val, D_A_val, D_L_val
 
 
 # Comparing analytical and numerical for each component universe
@@ -139,14 +139,14 @@ def compare_distances(z_values, cosmovalues, Omega_m0, Omega_lambda0):
     
     for z_value in z_values:
         # Numerical distances
-        D_C_num, D_A_num, D_L_num = numerical_distances(z_value, cosmovalues.redshift, cosmovalues.d_comoving, cosmovalues.d_angular, cosmovalues.d_luminosity)
+        D_P_num, D_A_num, D_L_num = numerical_distances(z_value, cosmovalues.redshift, cosmovalues.d_proper, cosmovalues.d_angular, cosmovalues.d_luminosity)
         
         # Analytical distances
         D_P_an, D_A_an, D_L_an = analytical_distances(z_value, Omega_m0, Omega_lambda0)
         
         # Print comparison
         print(f"Redshift z = {z_value}:")
-        print(f"  Numerical: D_P = {D_C_num:.4f} Mpc, D_A = {D_A_num:.4f} Mpc, D_L = {D_L_num:.4f} Mpc")
+        print(f"  Numerical: D_P = {D_P_num:.4f} Mpc, D_A = {D_A_num:.4f} Mpc, D_L = {D_L_num:.4f} Mpc")
         print(f"  Analytical: D_P = {D_P_an:.4f} Mpc, D_A = {D_A_an:.4f} Mpc, D_L = {D_L_an:.4f} Mpc")
         print("\n")
         
