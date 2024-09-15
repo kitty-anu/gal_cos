@@ -27,11 +27,25 @@ def H(z, Omega_k0, Omega_m0, Omega_lambda0):
 
 
 def cosmology_calc(dtau, Omega_m0, Omega_lambda0, H_0):
-    """ returns a class with arrays of lookback time, redshift, scale factor,
+    '''returns a class with arrays of lookback time, redshift, scale factor,
     hubble parameter, and various distances (comoving, proper, angular-diameter,
-    and luminosity) for given values of dtau and initial densities """
+    and luminosity) for given values of dtau and initial densities 
+    
+        Parameters
+        ----------
+        dtau: `float` (Gyr)
+            step size for lookback time to integrate with
+        Omega_m0: `float`
+            initial matter density
+        Omega_lambda0: `float`
+            initial lambda/dark energy density
+        H_0: `float`
+            hubble-lemaitre constant in 1/Gyr
+    '''
+
     
     Omega_k0 = 1 - Omega_m0 - Omega_lambda0
+    
     # Number of steps and maximum lookback time (Gigayears)
     tau_max = 13  # Maximum lookback time in Gigayears
     num_steps = int(tau_max / dtau)
@@ -61,16 +75,25 @@ def cosmology_calc(dtau, Omega_m0, Omega_lambda0, H_0):
         
         # comoving distance
         D_C[i] = D_C[i-1] + (c / a[i-1]) * dtau  # Comoving distance integral
-        D_P[i] = D_C[i] # Proper distance
-        D_A[i] = D_C[i] / (1 + z[i])  # Angular diameter distance
-        D_L[i] = D_C[i] * (1 + z[i])  # Luminosity distance
-        
+    
+    
+    # Proper (transversal) distance is equal to comoving (line-of-sight) distance for flat universes
+    # if universe is curvature-only (empty) -> D_P = R_0 * sinh(D_C / R_0)
+    if Omega_k0 == 1.0:
+        R_0 = c / H_0
+        D_P = R_0 * np.sinh(D_C / R_0)
+    else:
+        D_P = D_C
+    
+    D_A = D_P / (1 + z)  # Angular diameter distance
+    D_L = D_P * (1 + z)  # Luminosity distance
+    
+    # return all relevant values
     class values:
         lookbacktime = tau
         scalefactor = a
         redshift = z
         hubble_param = H_z
-        d_comoving = D_C
         d_proper = D_P
         d_luminosity = D_L
         d_angular = D_A
@@ -79,8 +102,8 @@ def cosmology_calc(dtau, Omega_m0, Omega_lambda0, H_0):
         
 # Constants
 dtau = 0.01  # Step size in Gigayears
-Omega_m0 = 0.3
-Omega_lambda0 = 0.7
+Omega_m0 = 0.0
+Omega_lambda0 = 0.0
 H_0 = 0.07  # in units of 1/Gigayear
 c = 299792.458 * 1e-3  # Speed of light in Mpc/Gyr
 
