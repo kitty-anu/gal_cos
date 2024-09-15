@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 
 # Constants
 dtau = 0.01  # Step size in Gigayears
-Omega_m0 = 0.3
-Omega_lambda0 = 0.7
+Omega_m0 = 0.0
+Omega_lambda0 = 0.0
 Omega_k0 = 1 - Omega_m0 - Omega_lambda0
 H_0 = 0.07  # in units of 1/Gigayear
 c = 299792.458 * 1e-3  # Speed of light in Mpc/Gyr
 
 # Number of steps and maximum lookback time (Gigayears)
-tau_max = 10  # Maximum lookback time in Gigayears
+tau_max = 14  # Maximum lookback time in Gigayears
 num_steps = int(tau_max / dtau)
 
 # Differential equation for da/dtau
@@ -52,7 +52,7 @@ for i in range(1, num_steps):
     a[i] = max(a[i-1] + dtau * da_dtau(a[i-1]), 1e-10)  # Prevent a from becoming zero or negative
     z[i] = 1 / a[i] - 1
     H_z[i] = H_a(a[i])
-    D_C[i] = D_C[i-1] + (c / H_a(a[i-1])) * dtau  # Comoving distance integral
+    D_C[i] = D_C[i-1] + (c / a[i-1]) * dtau  # Comoving distance integral
     D_P[i] = D_C[i] # Proper distance
     D_A[i] = D_C[i] / (1 + z[i])  # Angular diameter distance
     D_L[i] = D_C[i] * (1 + z[i])  # Luminosity distance
@@ -116,7 +116,7 @@ plt.savefig('scale factor.png')
 
 # Plot for redshift z(tau)
 plt.clf()
-plt.plot(tau, z)
+plt.plot(z,tau)
 plt.xlabel('Lookback Time τ (Gigayears)')
 plt.ylabel('Redshift z')
 plt.title('Redshift z(τ)')
