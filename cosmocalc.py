@@ -46,7 +46,7 @@ def cosmology_calc(dtau, Omega_m0, Omega_lambda0, H_0):
             hubble-lemaitre constant in 1/Gyr
     '''
 
-    
+    c = 299792.458 * 1e-3  # Speed of light in Mpc/Gyr
     Omega_k0 = 1 - Omega_m0 - Omega_lambda0
     
     # Number of steps and maximum lookback time (Gigayears)
