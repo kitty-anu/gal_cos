@@ -24,16 +24,16 @@ def da_dtau(a):
     else:
         return -H_0 * np.sqrt(Omega_m0 / a + Omega_k0 + Omega_lambda0 * a**2)
 
-# Hubble parameter as a function of a
-def H_a(a):
+# Hubble parameter as a function of z
+def H(z):
     if Omega_k0 == 1:  # Empty Universe
-        return H_0 * np.sqrt(Omega_k0 / a**2)
+        return H_0 * np.sqrt(Omega_k0 / (1/(1+z))**2)
     elif Omega_m0 == 1: # Matter-Only Univerese
-        return H_0 * np.sqrt(Omega_m0 / a**3)
+        return H_0 * np.sqrt(Omega_m0 / (1/(1+z))**3)
     elif Omega_lambda0 == 1: # Lambda-Only Universe
         return H_0 * np.sqrt(Omega_lambda0)    
     else:    
-        return H_0 * np.sqrt(Omega_m0 / a**3 + Omega_k0 / a**2 + Omega_lambda0)
+        return H_0 * np.sqrt(Omega_m0 / (1/(1+z))**3 + Omega_k0 / (1/(1+z))**2 + Omega_lambda0)
 
 # Initialize arrays
 tau = np.linspace(0, tau_max, num_steps)
@@ -51,7 +51,7 @@ a[0] = 1  # Initial condition: a = 1 at tau = 0 (today)
 for i in range(1, num_steps):
     a[i] = max(a[i-1] + dtau * da_dtau(a[i-1]), 1e-10)  # Prevent a from becoming zero or negative
     z[i] = 1 / a[i] - 1
-    H_z[i] = H_a(a[i])
+    H_z[i] = H(z[i])
     D_C[i] = D_C[i-1] + (c / a[i-1]) * dtau  # Comoving distance integral
     D_P[i] = D_C[i] # Proper distance
     D_A[i] = D_C[i] / (1 + z[i])  # Angular diameter distance
